@@ -2,7 +2,7 @@
 rm(list=ls())
 pacman::p_load(dplyr, foreign, survey, srvyr, epiDisplay, data.table, janitor, rads, naniar, stringr)
 library(labelled, dtsurvey)
-setwd("c:/R_learning/CHI_R")
+setwd("c:/R_learning/CHI")
 
 #Read Stata file, can only translate Stata version 12 or earlier, other packages can read later versions
 brfsraw <- read.dta(file="S:/WORK/surveys/brfs/prog_all/kc0020_finalz.dta", warn.missing.labels = FALSE)
@@ -82,13 +82,17 @@ byvars <- c("all", "age5")
 
 options(survey.lonely.psu = "adjust")
 brfskc <- dtsurvey(brfs, 1, weight= "kcwt_llcp", strata="x_ststr")
-#-----Run data for 2016-2020-----
 
-calc(ph.data = brfskc,
-     what = c("mean", "se", "rse", "numerator", "denominator"),
-     metrics = c("all", "age5"),
-     proportion = T,
-     by = "all", "age5")[]
+#-----Run data for 2016-2020-----
+result <- calc(ph.data = brfskc,
+          what = c("diab2", "smoker1"),
+          year >=2016,
+          by = c("all", "age5"),
+          metrics = c("mean", "se", "rse", "numerator", "denominator"),
+          per = 100,
+          win = 5,
+          wim_var = year, 
+          proportion = T)[]
 
 
 #----------------------------------------
